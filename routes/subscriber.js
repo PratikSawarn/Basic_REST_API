@@ -25,7 +25,7 @@ router.post('/', async(req,res)=>{
             name : req.body.name,
             email : req.body.email
         })
-        // const newSubscriber = await Subscriber()
+        // const newSubscriber = await Subscriber() 
         res.status(201).json(Subscriber)
     }catch{
         res.status(400).json({message : err.message})
