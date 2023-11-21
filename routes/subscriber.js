@@ -13,8 +13,8 @@ router.get('/',async (req,res)=>{
 })
 
 // getting one
-router.get('/:id',(req,res)=>{
-
+router.get('/:id',getSubscriber,(req,res)=>{
+    res.json(res.Subscriber)
 })
 
 // creating one
@@ -34,13 +34,40 @@ router.post('/', async(req,res)=>{
 })
 
 // updating one
-router.patch('/:id',(req,res)=>{
-
+router.patch('/:id',async (req,res)=>{
+    
+    try{
+        const updatedSubscriber = await subscribers.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        res.json(updatedSubscriber)
+    }catch(err){
+        res.status(400).json({ message:err.message })
+    }
 })
 
 // deleting
-router.delete('/:id',(req,res)=>{
-
+router.delete('/:id',getSubscriber,async (req,res)=>{
+    try{
+        await subscribers.deleteOne()
+        res.json({message:"id deleted"})
+    }catch(err){
+        res.status(500).json({message:err.message})
+    }
 })
+
+
+// middlewear
+async function getSubscriber(req,res,next){
+    let Subscriber
+    try{
+        Subscriber = await subscribers.findById(req.params.id)
+        if(Subscriber == null){
+            return res.status(500).json({message:"this id is not exist or maybe deleted "})
+        }
+    }catch(err){
+        return res.status(500).json({message:err.message})
+    }
+    res.Subscriber = Subscriber
+    next()
+}
 
 module.exports=router;
